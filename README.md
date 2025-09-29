@@ -2,14 +2,16 @@
 *Language Technology course final project*  
 Elisa Degara, Francesca Dessalvi, Clara Montemurro, Tommaso Giacomello
 ## Overview
-Artificial intelligence (AI) is increasingly influencing a wide range of social, economic, and technological domains. While public discourse reflects optimism about its potential, it also reveals persistent anxieties and criticisms about the consequences of this technology. Understanding these concerns is not only key to evaluating sentiment, but also to anticipating societal response, informing policy, guiding responsible communication against public misunderstanding, and identifying risks of misinformation/disinformation. In this work we investigate public concerns about artificial intelligence (AI) by comparing their expression in traditional and social media. Using a curated set of English-language news articles and tweets from X (formerly Twitter), available on Kaggle, we isolated negatively framed content. For tweets,
-we manually annotated posts and fine-tuned a sentiment classifier (Twitter-RoBERTa) to extract negative opinions. We then applied three topic modeling methods (LDA, NMF, SVD) to both corpora. Based on coherence scores and interpretability, we selected NMF and manually refined its output into a taxonomy of concerns. Our findings reveal both shared and medium specific anxieties: tweets emphasize speculative, emotional fears, while news articles focus on institutional and ethical risks. This analysis highlights how public narratives about AI are shaped by platform dynamics and communication norms.
+Artificial intelligence (AI) is increasingly influencing a wide range of social, economic, and technological domains. While public discourse reflects optimism about its potential, it also reveals persistent anxieties and criticisms about the consequences of this technology. Understanding these concerns is key not only to evaluating sentiment, but also to anticipating the societal response, informing policy, guiding responsible communication to counter public misunderstanding and identifying the risks of misinformation and disinformation. In this study, we examine public concerns about AI by comparing their expression in traditional and social media. Using a curated set of English-language news articles and X (formerly Twitter) tweets available on Kaggle, we isolated content with a negative frame. For tweets,
+we manually annotated posts and fine-tuned a sentiment classifier (Twitter-RoBERTa) to extract negative opinions. We then applied three topic modeling methods (LDA, NMF, SVD) to both corpora. Based on coherence scores and interpretability, we selected NMF and manually refined its output into a taxonomy of concerns. Our findings reveal both shared and medium specific anxieties: tweets emphasise speculative and emotional fears, whereas news articles focus on institutional and ethical risks. This analysis highlights how public narratives about AI are shaped by platform dynamics and communication norms. 
+ 
+
+
 
 ## Data
 
 - **Tweets**: Collected from a Kaggle dataset of ~20,000 English-language tweets (July–November 2024), filtered for relevant AI-related terms and manually annotated for sentiment.
-- **News Articles**: Retrieved from LexisNexis (500 English-language articles, June–December 2024), filtered for negative framing and manually extracted concern-focused sentences.
-
+- **News Articles**: Retrieved from LexisNexis database (500 English-language articles from June to December 2024) and filtered for negative framing. Concern-focused sentences were then manually extracted.
 Due to licensing and privacy constraints, datasets are not included in this repository.
 
 ## Methodology
