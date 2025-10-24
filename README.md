@@ -1,4 +1,4 @@
-# Invesigating public concerns about AI: A Comparative Topic Modeling Analysis of Tweets and News Articles
+# Investigating public concerns about AI: A Comparative Topic Modeling Analysis of Tweets and News Articles
 *Language Technology course final project*  
 Elisa Degara, Francesca Dessalvi, Clara Montemurro, Tommaso Giacomello
 ## Overview
