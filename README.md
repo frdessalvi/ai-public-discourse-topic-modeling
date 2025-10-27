@@ -1,46 +1,101 @@
-# Investigating public concerns about AI: A Comparative Topic Modeling Analysis of Tweets and News Articles
-*Language Technology course final project*  
-Elisa Degara, Francesca Dessalvi, Clara Montemurro, Tommaso Giacomello
-## Overview
-Artificial intelligence (AI) is increasingly influencing a wide range of social, economic, and technological domains. While public discourse reflects optimism about its potential, it also reveals persistent anxieties and criticisms about the consequences of this technology. Understanding these concerns is key not only to evaluating sentiment, but also to anticipating the societal response, informing policy, guiding responsible communication to counter public misunderstanding and identifying the risks of misinformation and disinformation. In this study, we examine public concerns about AI by comparing their expression in traditional and social media. Using a curated set of English-language news articles and X (formerly Twitter) tweets available on Kaggle, we isolated content with a negative frame. For tweets,
-we manually annotated posts and fine-tuned a sentiment classifier (Twitter-RoBERTa) to extract negative opinions. We then applied three topic modeling methods (LDA, NMF, SVD) to both corpora. Based on coherence scores and interpretability, we selected NMF and manually refined its output into a taxonomy of concerns. Our findings reveal both shared and medium specific anxieties: tweets emphasise speculative and emotional fears, whereas news articles focus on institutional and ethical risks. This analysis highlights how public narratives about AI are shaped by platform dynamics and communication norms. 
- 
+# Investigating Public Concerns about AI  
+*A Comparative Topic Modeling Analysis of Tweets and News Articles*
 
+Artificial Intelligence (AI) is rapidly transforming social, economic, and technological domains. Public discourse reflects both optimism about its potential and persistent anxieties about its risks. Understanding these concerns is crucial for anticipating societal responses, guiding policy, and countering misinformation.
 
+This project analyzes how public concerns about Artificial Intelligence (AI) are expressed across **social** and **traditional** media, combining **sentiment classification** and **topic modeling**. It was developed as the final project of a *Language Technology  (NLP)* course.
 
-## Data
+---
 
-- **Tweets**: Collected from a Kaggle dataset of ~20,000 English-language tweets (July–November 2024), filtered for relevant AI-related terms and manually annotated for sentiment.
-- **News Articles**: Retrieved from LexisNexis database (500 English-language articles from June to December 2024) and filtered for negative framing. Concern-focused sentences were then manually extracted.
-Due to licensing and privacy constraints, datasets are not included in this repository.
+## Dataset Overview
+
+| Source | Size / Period | Description |
+|---------|---------------|-------------|
+| **Tweets (X)** | ~20,000 English tweets (Jul 2023–Nov 2024) | Filtered for AI-related terms, manually annotated for sentiment. |
+| **News Articles** | 500 English articles (Jun 2023–Dec 2024) | Retrieved from LexisNexis; manually extracted concern-focused sentences. |
+
+> Due to licensing and privacy constraints, datasets are not included in this repository. Scripts and configs can reproduce the pipeline on equivalent data.
+
+---
 
 ## Methodology
 
-- **Sentiment Classification**: Fine-tuned a Twitter-RoBERTa model on a subset of manually annotated tweets to classify sentiment as positive, neutral, or negative.
-- **Preprocessing**: Cleaned and lemmatized texts, removed noise, and extracted frequent bigrams to enhance topic modeling.
-- **Topic Modeling**: Applied LDA, NMF, and SVD to both corpora. Selected NMF based on coherence scores and interpretability.
-- **Taxonomy Construction**: Manually refined NMF outputs into human-labeled categories of concern, specific to each medium.
+### 1. Sentiment Classification
 
-  ## Key Findings
-- **Tweets** tended to focus on emotional and speculative concerns such as bots, deepfakes, and AI in warfare.
-- **News articles** focused more on institutional risks like privacy, algorithmic bias, and job displacement.
-- These differences suggest that platform dynamics shape how AI-related concerns are framed and communicated.
+We fine-tuned a `Twitter-RoBERTa-base` model on **2 000 manually annotated tweets** to classify overall sentiment toward AI as **negative**, **neutral**, or **positive**.  
+
+| Model | Accuracy | Macro-avg F1 | Notes |
+|--------|-----------|--------------|-------|
+| Baseline (LogReg + TF-IDF) | 0.651 | 0.642 | Simple linear baseline |
+| DistilBERT | 0.654 | 0.631 | Lightweight transformer |
+| **Twitter-RoBERTa-base** | **0.698** | **0.694** | Best performance |
+
+> `Twitter-RoBERTa-base` achieved the highest accuracy and macro-F1, confirming the value of pre-training on Twitter data for this domain.
+
+Tweets predicted as *negative* were retained for subsequent topic modeling.
+
+---
+
+### 2. Text Preprocessing
+- Lowercasing, punctuation & stopword removal  
+- Lemmatization (SpaCy)  
+- POS filtering (nouns, verbs, adjectives, adverbs)  
+- Bigram extraction using NPMI > 0.5  
+- TF-IDF representation for `NMF` and `SVD`; BoW for `LDA`
+
+---
+
+### 3. Topic Modeling
+We applied **LDA**, **NMF**, and **SVD** on both corpora (tweets and news) and compared models using a combined coherence metric  
+`Score = 0.75 × Cv + 0.25 × UMass`.
+
+| Model | Tweets (Cv norm) | News (Cv norm) |
+|--------|------------------|----------------|
+| LDA | 0.25 | 0.52 |
+| **NMF** | **1.00** | **0.99** |
+| SVD | 0.13 | 0.25 |
+
+A one-sided Wilcoxon signed-rank test confirmed the **superiority of NMF** (*p* < 1 × 10⁻⁴).  
+After manual refinement of topic labels, coherence further improved:  
+- Tweets : 0.60 → 0.82  
+- News : 0.49 → 0.75
+
+---
+
+## Results and Key Findings
+
+| Medium | Dominant Themes | Interpretation |
+|---------|----------------|----------------|
+| **Tweets** | Bots & automation, AI in war, Deepfakes, Existential risk, Thinking & education | Emotionally charged, speculative, platform-driven fears |
+| **News** | Job automation, Algorithmic bias, Privacy, Scams, Ethical & institutional risks | Analytical framing, policy-oriented concerns |
+
+> **Insight:** Social media emphasizes *emotional & speculative* risks, while journalism stresses *institutional & ethical* risks—revealing how communication norms shape AI narratives.
+
+---
 
 ## Limitations and Future Work
 
-- **Dataset constraints**: The tweet dataset was sourced from a publicly available Kaggle collection and may not fully represent the diversity of public opinion. Similarly, the news articles were limited to English-language sources from the LexisNexis database, potentially excluding relevant perspectives from other media outlets or regions.
-  
-- **Lack of demographic metadata**: Without user-specific or publication-specific context, we were unable to explore how AI concerns vary across demographic groups.
+- **Dataset coverage:** Public Kaggle and LexisNexis subsets may not reflect the full diversity of opinions.  
+- **Lack of demographics:** User- or publication-level context not available.  
+- **Manual refinement:** Human labeling of topics can be subjective.
 
-- **Contextual limitations in social media**: Tweets were analyzed in isolation, without considering reply threads or user histories. This prevented a deeper understanding of conversational dynamics or influence patterns.
+**Future extensions**
+- Broaden media sources and time frames  
+- Track temporal shifts in AI discourse  
+- Integrate conversation-level structures for tweets
 
-- **Manual interpretation of topics**: While NMF provided interpretable topic structures, the process of refining and labeling these topics was subjective, and subtle or overlapping meanings may have been missed.
+---
 
-For future work, we propose extending the analysis to:
-- Include a broader range of media sources, languages, and timeframes.
-- Analyze temporal sentiment shifts and reactions to specific AI-related events.
-- Integrate conversation threads or network structures from social media to better understand discourse dynamics and the spread of concerns.
-- Explore demographic or geographic segmentation where possible to tailor insight toward specific populations.
+## References
+- Twitter-RoBERTa-base model — *Hugging Face Transformers*  
+- LDA, NMF, SVD implementations — *scikit-learn* / *gensim*  
+- Datasets — *Kaggle (tweets)*, *LexisNexis (news)*  
+
+---
+
+*Authors:* Elisa Degara · Francesca Dessalvi · Clara Montemurro · Tommaso Giacomello  
+*Course:* Language Technology, 2025 – Bocconi University
+
 
 
 
