@@ -35,41 +35,49 @@ We fine-tuned a `Twitter-RoBERTa-base` model on **2 000 manually annotated tweet
 Tweets predicted as *negative* were retained for subsequent topic modeling.
 
 ---
-
 ### 2. Text Preprocessing
 - Lowercasing, punctuation & stopword removal  
 - Lemmatization (SpaCy)  
 - POS filtering (nouns, verbs, adjectives, adverbs)  
-- Bigram extraction using NPMI > 0.5  
-- TF-IDF representation for `NMF` and `SVD`; BoW for `LDA`
+- Bigram extraction using **NPMI > 0.5** and occurring in ≥2 documents 
+- Vocabulary filtering: removed overly common (>50% for news, >70% for tweets) or too rare terms (<2 documents for news, <10 for tweets)  
+- Representations: **TF–IDF** for `NMF` and `SVD`, **Bag-of-Words** for `LDA`
 
 ---
-
 ### 3. Topic Modeling
-We applied **LDA**, **NMF**, and **SVD** on both corpora (tweets and news) and compared models using a combined coherence metric  
+
+We applied **LDA**, **NMF**, and **SVD** to both the tweet and news corpora after identical preprocessing.  
+To select the best model, we combined two coherence metrics — semantic (`Cv`) and statistical (`UMass`) — into a weighted score:
+
 `Score = 0.75 × Cv + 0.25 × UMass`.
 
-| Model | Tweets (Cv norm) | News (Cv norm) |
-|--------|------------------|----------------|
+| Model | Tweets (Normalized Cv) | News (Normalized Cv) |
+|--------|------------------------|----------------------|
 | LDA | 0.25 | 0.52 |
 | **NMF** | **1.00** | **0.99** |
 | SVD | 0.13 | 0.25 |
 
-A one-sided Wilcoxon signed-rank test confirmed the **superiority of NMF** (*p* < 1 × 10⁻⁴).  
-After manual refinement of topic labels, coherence further improved:  
-- Tweets : 0.60 → 0.82  
-- News : 0.49 → 0.75
+A one-sided **Wilcoxon signed-rank test** (*p* < 1×10⁻⁴) confirmed that **NMF** significantly outperformed LDA and SVD across both corpora.  
+After manual refinement of NMF topics, coherence further improved:  
+- **Tweets:** 0.60 → 0.82  
+- **News:** 0.49 → 0.75  
+
+> **Result:** NMF yielded the most interpretable and coherent topics, making it the preferred model for final taxonomy construction.
 
 ---
+## Results 
 
-## Results and Key Findings
+After identifying **NMF** as the most coherent model, we manually grouped its topics into broader, human-labeled categories of public concern.  
+Overlapping topics were merged under unified, descriptive labels, producing the following **refined taxonomies** for news and tweets.
 
-| Medium | Dominant Themes | Interpretation |
-|---------|----------------|----------------|
-| **Tweets** | Bots & automation, AI in war, Deepfakes, Existential risk, Thinking & education | Emotionally charged, speculative, platform-driven fears |
-| **News** | Job automation, Algorithmic bias, Privacy, Scams, Ethical & institutional risks | Analytical framing, policy-oriented concerns |
+| Medium | Refined Categories of Concern | Description |
+|---------|------------------------------|--------------|
+| **News** | 1. AI & automation substituting human labor<br>2. Algorithmic bias (incl. gender bias)<br>3. Abusive use of Generative AI (e.g., child imagery)<br>4. Deceptive AI in crime and scams<br>5. General existential threat posed by AI<br>6. Privacy & data security | Structured, analytical framing focused on institutional, ethical, and societal risks. |
+| **Tweets** | 1. Bot activity<br>2. AI substituting human labor<br>3. Fears of AI in warfare and geopolitics<br>4. General existential threat posed by AI<br>5. Misinformation and deepfakes<br>6. AI’s influence on thinking and education | Emotional, speculative engagement reflecting personal fears and reactive discourse. |
 
-> **Insight:** Social media emphasizes *emotional & speculative* risks, while journalism stresses *institutional & ethical* risks—revealing how communication norms shape AI narratives.
+> Both media highlight similar concerns but diverge in framing.  
+> **Tweets** emphasize *speculative and personal* fears (bots, militarized AI, misinformation), whereas **news articles** stress *institutional and ethical* issues (job automation, bias, privacy).
+> These contrasts illustrate how platform dynamics and communication norms shape AI narratives.
 
 ---
 
@@ -87,10 +95,11 @@ After manual refinement of topic labels, coherence further improved:
 ---
 
 ## References
-- Twitter-RoBERTa-base model — *Hugging Face Transformers*  
-- LDA, NMF, SVD implementations — *scikit-learn* / *gensim*  
-- Datasets — *Kaggle (tweets)*, *LexisNexis (news)*  
+- **Twitter-RoBERTa-base** — [Hugging Face Model Card](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment)  
+  *Barbieri et al., “TweetEval: Unified Benchmark and Comparative Evaluation for Tweet Classification,” ACL 2020.*
 
+- **DistilBERT** — [Hugging Face Model Card](https://huggingface.co/distilbert-base-uncased)  
+  *Sanh et al., “DistilBERT, a distilled version of BERT,” arXiv:1910.01108 (2019).*
 ---
 
 *Authors:* Elisa Degara · Francesca Dessalvi · Clara Montemurro · Tommaso Giacomello  
